@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import $ from 'jquery';
-import { API_ROOT } from './constants.js';
+import { API_ROOT } from '../constants.js';
 
 const FormItem = Form.Item;
 
@@ -34,10 +34,12 @@ class RegistrationForm extends React.Component {
             }
         });
     }
+
     handleConfirmBlur = (e) => {
         const value = e.target.value;
         this.setState({ confirmDirty: this.state.confirmDirty || !!value });
     }
+
     compareToFirstPassword = (rule, value, callback) => {
         const form = this.props.form;
         if (value && value !== form.getFieldValue('password')) {
