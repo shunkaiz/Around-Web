@@ -6,11 +6,17 @@ import {Main} from './Main';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 class App extends Component {
-  render() {
+    state = {
+        isLoggedIn : false,
+    }
+    handleLogin =()=>{
+
+    }
+    render() {
     return (
       <div className="App">
         <Header/>
-        <Main/>
+        <Main isLoggedIn = {this.state.isLoggedIn} handleLogin = {this.handleLogin}/>
       </div>
     );
   }
