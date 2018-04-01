@@ -9,8 +9,8 @@ class App extends Component {
     state = {
         isLoggedIn : !!localStorage.getItem(TOKEN_KEY),
     }
-    handleLogin =()=>{
-        localStorage.setItem(TOKEN_KEY, token);
+    handleLogin =(response)=>{
+        localStorage.setItem(TOKEN_KEY, response);
         this.setState({isLoggedIn : true});
     }
     handleLogout = ()=>{
@@ -20,7 +20,7 @@ class App extends Component {
     render() {
     return (
       <div className="App">
-        <Header isLoggedin = {this.state.isLoggedIn} handleLogout = {this.handleLogout}/>
+        <Header isLoggedIn = {this.state.isLoggedIn} handleLogout = {this.handleLogout}/>
         <Main isLoggedIn = {this.state.isLoggedIn} handleLogin = {this.handleLogin}/>
       </div>
     );
