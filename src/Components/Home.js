@@ -2,10 +2,14 @@ import React from 'react';
 import $ from 'jquery';
 import { Tabs, Button, Spin} from 'antd';
 import {API_ROOT, GEO_OPTIONS, AUTH_PREFIX, TOKEN_KEY} from "../constants";
+import {Gallery} from "./Gallery";
+
 export class Home extends React.Component {
     state = {
         loadingGeoLocation: false,
-        error : ''
+        loadingPost: false,
+        error : '',
+        posts : []
     }
 
     getGeoLocation = () =>{
@@ -43,6 +47,20 @@ export class Home extends React.Component {
             return <div>{this.state.error}</div>
         }else if(this.state.loadingGeoLocation){
             return  <Spin tip='Loading Geo Location...'/>
+        }else if(this.state.loadingPost){
+            return <Spin tip='Loading Posts...'/>
+        }else if(this.state.post && this.state.posts.length > 0){
+            const images = this.state.posts.map((post)=>{
+                return{
+                    user: post.user,
+                    src: post.url,
+                    thumbnail: post.url,
+                    thumbnailWidth: 400,
+                    thumbnailHeight: 300,
+                    caption: post.message,
+                }
+            })
+            return <Gallery images={images}/>
         }else{
             return <div>content</div>
         }
@@ -51,6 +69,7 @@ export class Home extends React.Component {
     loadNearbyPosts = (position) => {
         const latitude = 37.7915953;
         const longitude = -122.3937977;
+        this.setState({loadingPost: true});
         $.ajax({
             url: `${API_ROOT}/search?lat=${latitude}&lon=${longitude}&range=20`,
             method : 'GET',
@@ -58,9 +77,10 @@ export class Home extends React.Component {
                 Authorization : `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
             },
         }).then((response)=>{
+            this.setState({loadingPost: false, posts: response});
             console.log(response);
         },(response)=>{
-            console.log(response.responseText);
+            this.setState({loadingPost: false, error: response.responseText});
         }).catch((error)=>{
             console.log('')
         })
