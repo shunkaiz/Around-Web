@@ -3,6 +3,10 @@ import { Tabs, Button} from 'antd';
 import {GEO_OPTIONS} from "../constants";
 
 export class Home extends React.Component {
+    state = {
+        loadingGeoLocation: false,
+
+    }
 
     getGeoLocation = () =>{
         if ("geolocation" in navigator) {
@@ -18,7 +22,10 @@ export class Home extends React.Component {
     }
 
     onSuccessLoadGeoLocation = (position) =>{
-        console.log(position);
+        this.setState({loadingGeoLocation: false});
+        //console.log(position);
+        const {latitude, longitude} = position.coords;
+        localStorage.setItem('POS_KEY', JSON.stringify({lat: latitude, lon: longitude}));
     }
 
     onFailedLoadGeoLocation = () =>{
@@ -26,6 +33,7 @@ export class Home extends React.Component {
     }
 
     componentDidMount(){
+        this.setState({loadingGeoLocation: true});
         this.getGeoLocation();
     }
 
@@ -34,7 +42,9 @@ export class Home extends React.Component {
         const TabPane = Tabs.TabPane;
         return (
             <Tabs tabBarExtraContent={operations} className = 'mainTabs'>
-                <TabPane tab="Post" key="1">Content of Tab Pane 1</TabPane>
+                <TabPane tab="Post" key="1">
+                    {this.state.loadingGeoLocation ?<span>Loading...</span>:null}
+                </TabPane>
                 <TabPane tab="Map" key="2">Content of Tab Pane 2</TabPane>
             </Tabs>
         );
