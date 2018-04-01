@@ -13,7 +13,8 @@ class NormalLoginForm extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 $.ajax({
-                    url: '${API_ROOT}/login',
+                    url: `${API_ROOT}/login`,
+                    method: 'POST',
                     data: JSON.stringify({
                         username: values.username,
                         password: values.password
