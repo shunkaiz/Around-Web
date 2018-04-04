@@ -3,6 +3,8 @@ import $ from 'jquery';
 import { Tabs, Button, Spin} from 'antd';
 import {API_ROOT, GEO_OPTIONS, AUTH_PREFIX, TOKEN_KEY} from "../constants";
 import {Gallery} from "./Gallery";
+import {CreatePostButton} from "./CreatePostButton";
+
 
 export class Home extends React.Component {
     state = {
@@ -87,7 +89,7 @@ export class Home extends React.Component {
     }
 
     render() {
-        const operations = <Button type={'primary'}>Create My New Post</Button>;
+        const operations = <CreatePostButton type={'primary'}></CreatePostButton>;
         const TabPane = Tabs.TabPane;
         return (
             <Tabs tabBarExtraContent={operations} className = 'mainTabs'>
