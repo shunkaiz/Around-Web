@@ -72,12 +72,12 @@ export class Home extends React.Component {
         const latitude = 37.7915953;
         const longitude = -122.3937977;
         this.setState({loadingPost: true});
-        $.ajax({
+        return  $.ajax({
             url: `${API_ROOT}/search?lat=${latitude}&lon=${longitude}&range=20`,
             method : 'GET',
             headers : {
-                Authorization : `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
-            },
+            Authorization : `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
+        },
         }).then((response)=>{
             this.setState({loadingPost: false, posts: response});
             console.log(response);
@@ -85,7 +85,7 @@ export class Home extends React.Component {
             this.setState({loadingPost: false, error: response.responseText});
         }).catch((error)=>{
             console.log('')
-        })
+        });
     }
 
     render() {
