@@ -18,6 +18,7 @@ export class CreatePostButton extends React.Component{
     handleOk = () => {
         this.form.validateFields((err, value)=>{
             if(!err){
+                console.log(value);
                 this.setState({confirmLoading: true });
                 const {lat, lon} = localStorage.getItem(POS_KEY);
                 const formData = new FormData();
@@ -34,7 +35,7 @@ export class CreatePostButton extends React.Component{
                     },
                     processData: false,
                     contentType: false,
-                    dataType: false
+                    dataType: 'text'
                 }).then((response)=>{
                     message.success('created a post successfully');
                     return this.props.loadNearbyPosts().then(()=>{

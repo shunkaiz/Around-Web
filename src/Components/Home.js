@@ -1,59 +1,59 @@
 import React from 'react';
 import $ from 'jquery';
 import { Tabs, Button, Spin} from 'antd';
-import {API_ROOT, GEO_OPTIONS, AUTH_PREFIX, TOKEN_KEY} from "../constants";
+import {API_ROOT, GEO_OPTIONS, AUTH_PREFIX, TOKEN_KEY, POS_KEY} from "../constants";
 import {Gallery} from "./Gallery";
 import {CreatePostButton} from "./CreatePostButton";
 
+const TabPane = Tabs.TabPane;
 
 export class Home extends React.Component {
     state = {
         loadingGeoLocation: false,
-        loadingPost: false,
-        error : '',
-        posts : []
+        loadingPosts: false,
+        error: '',
+        posts: [],
     }
 
-    getGeoLocation = () =>{
+    componentDidMount() {
+        this.setState({ loadingGeoLocation: true, error: '' });
+        this.getGeoLocation();
+    }
+
+    getGeoLocation = () => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 this.onSuccessLoadGeoLocation,
-                this.onFailedLoadGeoLocation,
+                this.onFailedLoadGeolocation,
                 GEO_OPTIONS,
             );
         } else {
             this.setState({ error: 'Your browser does not support geolocation!' });
         }
-
     }
 
-    onSuccessLoadGeoLocation = (position) =>{
-        this.setState({loadingGeoLocation: false, error: ''});
-        //console.log(position);
-        const {latitude, longitude} = position.coords;
-        localStorage.setItem('POS_KEY', JSON.stringify({lat: latitude, lon: longitude}));
-        this.loadNearbyPosts(position);
+    onSuccessLoadGeoLocation = (position) => {
+        console.log(position);
+        this.setState({ loadingGeoLocation: false, error: '' });
+        const { latitude, longitude } = position.coords;
+        localStorage.setItem(POS_KEY, JSON.stringify({lat: latitude, lon: longitude}));
+        this.loadNearbyPosts();
     }
 
-    onFailedLoadGeoLocation = () => {
-        this.setState({loadingGeoLocation: false, error: 'Failed to get Geo location'})
+    onFailedLoadGeolocation = () => {
+        this.setState({ loadingGeoLocation: false, error: 'Failed to load geo location!' });
     }
 
-    componentDidMount(){
-        this.setState({loadingGeoLocation: true});
-        this.getGeoLocation();
-    }
-
-    getGalleryPanelContent = () =>{
-        if(this.state.error){
-            return <div>{this.state.error}</div>
-        }else if(this.state.loadingGeoLocation){
-            return  <Spin tip='Loading Geo Location...'/>
-        }else if(this.state.loadingPost){
-            return <Spin tip='Loading Posts...'/>
-        }else if(this.state.post && this.state.posts.length > 0){
-            const images = this.state.posts.map((post)=>{
-                return{
+    getGalleryPanelContent = () => {
+        if (this.state.error) {
+            return <div>{this.state.error}</div>;
+        } else if (this.state.loadingGeoLocation) {
+            return <Spin tip="Loading geo location..."/>;
+        } else if (this.state.loadingPosts) {
+            return <Spin tip="Loading posts..."/>;
+        } else if (this.state.posts && this.state.posts.length > 0) {
+            const images = this.state.posts.map((post) => {
+                return {
                     user: post.user,
                     src: post.url,
                     thumbnail: post.url,
@@ -61,43 +61,45 @@ export class Home extends React.Component {
                     thumbnailHeight: 300,
                     caption: post.message,
                 }
-            })
-            return <Gallery images={images}/>
-        }else{
-            return <div>content</div>
+            });
+            return <Gallery images={images}/>;
+        }
+        else {
+            return null;
         }
     }
 
-    loadNearbyPosts = (position) => {
-        const latitude = 37.7915953;
-        const longitude = -122.3937977;
-        this.setState({loadingPost: true});
-        return  $.ajax({
-            url: `${API_ROOT}/search?lat=${latitude}&lon=${longitude}&range=20`,
-            method : 'GET',
-            headers : {
-            Authorization : `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
-        },
-        }).then((response)=>{
-            this.setState({loadingPost: false, posts: response});
+    loadNearbyPosts = () => {
+        const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
+        this.setState({ loadingPosts: true, error: ''});
+        return $.ajax({
+            url: `${API_ROOT}/search?lat=${lat}&lon=${lon}&range=20`,
+            method: 'GET',
+            headers: {
+                Authorization: `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
+            },
+        }).then((response) => {
+            this.setState({ posts: response, loadingPosts: false, error: '' });
             console.log(response);
-        },(response)=>{
-            this.setState({loadingPost: false, error: response.responseText});
-        }).catch((error)=>{
-            console.log('')
+        }, (error) => {
+            this.setState({ loadingPosts: false, error: error.responseText });
+            console.log(error);
+        }).catch((error) => {
+            console.log(error);
         });
     }
 
     render() {
-        const operations = <CreatePostButton type={'primary'}></CreatePostButton>;
-        const TabPane = Tabs.TabPane;
+        const createPostButton = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts}/>;
+
         return (
-            <Tabs tabBarExtraContent={operations} className = 'mainTabs'>
-                <TabPane tab="Post" key="1">
+            <Tabs tabBarExtraContent={createPostButton} className="main-tabs">
+                <TabPane tab="Posts" key="1">
                     {this.getGalleryPanelContent()}
                 </TabPane>
-                <TabPane tab="Map" key="2">Content of Tab Pane 2</TabPane>
+                <TabPane tab="Map" key="2">Content of tab 2</TabPane>
             </Tabs>
         );
     }
 }
+
