@@ -12,9 +12,10 @@ export class AroundMarker extends React.Component{
     }
 
     render(){
+        const {lat, lng} = this.props.post.localion;
         return(
             <Marker
-                position={{ lat: this.props.pos.lat, lng: this.props.pos.lng }}
+                position={{ lat: this.props.post.lat, lng: this.props.pos.lng }}
                 onClick={this.onToggleOpen}
             >
                 {this.state.isOpen ? <InfoWindow onCloseClick={this.onToggleOpen}>
