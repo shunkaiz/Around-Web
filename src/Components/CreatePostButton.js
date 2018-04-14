@@ -20,10 +20,10 @@ export class CreatePostButton extends React.Component{
             if(!err){
                 console.log(value);
                 this.setState({confirmLoading: true });
-                const {lat, lon} = localStorage.getItem(POS_KEY);
+                const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
                 const formData = new FormData();
                 formData.set('lat', lat)
-                formData.set('lat', lon)
+                formData.set('lon', lon)
                 formData.set('message', value.message)
                 formData.set('image', value.image[0])
                 $.ajax({
@@ -44,8 +44,8 @@ export class CreatePostButton extends React.Component{
                             visible: false
                         });
                     });
-                }, (response)=>{
-                    message.error(response.responseText);
+                }, (error)=>{
+                    message.error(error.responseText);
                     this.setState({
                         confirmLoading: false,
                         visible: false
