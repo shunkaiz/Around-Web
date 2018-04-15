@@ -39,9 +39,11 @@ class AroundMap extends React.Component{
                 defaultOptions={{ scaleControl: true }}
             >
 
-                {this.props.posts.map((post)=>{
-                    return <AroundMarker key = {post.url} post = {post}/>
-                })}
+                {this.props.posts ? this.props.posts.map((post, index)=>{
+                    return <AroundMarker
+                        key={`${index}-${post.user}-${post.url}`}
+                        post = {post}/>
+                }):null}
 
             </GoogleMap>
         )
