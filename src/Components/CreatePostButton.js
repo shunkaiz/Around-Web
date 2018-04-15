@@ -2,11 +2,10 @@ import React from 'react';
 import $ from 'jquery';
 import { Modal, Button, message } from 'antd';
 import {WrappedCreatePostForm} from "./CreatePostForm";
-import {API_ROOT, TOKEN_KEY, POS_KEY, AUTH_PREFIX} from "../constants";
+import {API_ROOT, TOKEN_KEY, POS_KEY, AUTH_PREFIX, LOC_SHAKE} from "../constants";
 
 export class CreatePostButton extends React.Component{
     state = {
-        ModalText: 'Content of the modal',
         visible: false,
         confirmLoading: false,
     }
@@ -18,14 +17,16 @@ export class CreatePostButton extends React.Component{
     handleOk = () => {
         this.form.validateFields((err, value)=>{
             if(!err){
-                console.log(value);
-                this.setState({confirmLoading: true });
+
                 const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
                 const formData = new FormData();
-                formData.set('lat', lat)
-                formData.set('lon', lon)
+                formData.set('lat', lat + Math.random() * LOC_SHAKE * 2 - LOC_SHAKE)
+                formData.set('lon', lon + Math.random() * LOC_SHAKE * 2 - LOC_SHAKE)
                 formData.set('message', value.message)
                 formData.set('image', value.image[0])
+
+                // show loading on create button
+                this.setState({confirmLoading: true });
                 $.ajax({
                     url: `${API_ROOT}/post`,
                     method: 'POST',

@@ -91,14 +91,15 @@ export class Home extends React.Component {
     }
     render() {
         const createPostButton = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts}/>;
-
+        let name = "Posts";
         return (
             <Tabs tabBarExtraContent={createPostButton} className="main-tabs">
-                <TabPane tab="Posts" key="1">
+                <TabPane tab={`${name}`} key="1">
                     {this.getGalleryPanelContent()}
                 </TabPane>
                 <TabPane tab="Map" key="2">
                     <WrappedAroundMap
+                        loadNearbyPosts={this.loadNearbyPosts}
                         posts = {this.state.posts}
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places"
                         loadingElement={<div style={{ height: `100%` }} />}
